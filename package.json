@@ -1,0 +1,22 @@
+{
+  "name": "git-ai-commit",
+  "version": "1.0.0",
+  "description": "A command-line tool that uses AI to generate meaningful and context-aware commit messages based on staged changes. This package aims to save time, ensure consistent commit message quality, and improve project documentation by leveraging natural language generation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx git-ai-commit --help"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@syedharis14_github.com:syedharis14/git-ai-commit.git"
+  },
+  "keywords": [
+    "commit",
+    "messages"
+  ],
+  "author": "Syed Haris Bin Aamir",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}

@@ -15,7 +15,7 @@ program.name("git-ai-commit").description("AI-powered commit message generator")
 
 program
     .command("generate")
-    .description("Generate an AI-powered commit message")
+    .description("Generate and apply an AI-powered commit message")
     .action(async () => {
         try {
             const diff = await git.diff(["--staged"]);
@@ -35,7 +35,8 @@ program
                     {
                         role: "system",
                         content:
-                            "You are an AI that writes concise and meaningful Git commit messages based on provided diffs."
+                            "You are an AI that writes concise and meaningful Git commit messages following the Conventional Commits format. " +
+                            "Prefix the message with a type (e.g., feat, fix, chore), and keep it short and descriptive."
                     },
                     {
                         role: "user",
@@ -48,8 +49,23 @@ program
 
             console.log(chalk.green("✅ AI-Generated Commit Message:"));
             console.log(chalk.blue(`"${commitMessage}"`));
+
+            // Confirm before committing
+            const shouldCommit = await new Promise(resolve => {
+                process.stdout.write(chalk.yellow("💡 Do you want to apply this commit? (y/n): "));
+                process.stdin.once("data", data => {
+                    resolve(data.toString().trim().toLowerCase() === "y");
+                });
+            });
+
+            if (shouldCommit) {
+                await git.commit(commitMessage);
+                console.log(chalk.green("✅ Commit applied successfully!"));
+            } else {
+                console.log(chalk.yellow("❌ Commit canceled by the user."));
+            }
         } catch (error) {
-            console.error(chalk.red("❌ Error fetching AI-generated commit message:"), error);
+            console.error(chalk.red("❌ Error applying AI-generated commit message:"), error);
         }
     });
 

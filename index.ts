@@ -35,8 +35,22 @@ program
                     {
                         role: "system",
                         content:
-                            "You are an AI that writes concise and meaningful Git commit messages following the Conventional Commits format. " +
-                            "Prefix the message with a type (e.g., feat, fix, chore), and keep it short and descriptive."
+                            "You are an expert at writing Conventional Commits messages. Follow these rules:\n" +
+                            "1. Format: <type>(<scope>): <subject>\n" +
+                            "2. Types: feat, fix, chore, docs, style, refactor, perf, test\n" +
+                            "3. Scope: Optional technical context (e.g., component, module)\n" +
+                            "4. Subject: Imperative tense, <= 50 chars, no period\n\n" +
+                            "Examples:\n" +
+                            "- feat(auth): add OAuth2 login endpoint\n" +
+                            "- fix(server): resolve memory leak in request handler\n" +
+                            "- chore(deps): update lodash to 4.17.21\n" +
+                            "- refactor(ui): simplify dashboard component structure\n\n" +
+                            "Requirements:\n" +
+                            "- Analyze the git diff carefully\n" +
+                            "- Identify primary change type and scope\n" +
+                            "- Use technical terms but avoid jargon\n" +
+                            "- For breaking changes, append ! after type and include BREAKING CHANGE in body\n\n" +
+                            "Respond ONLY with the formatted commit message. No explanations or markdown."
                     },
                     {
                         role: "user",

@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import clipboardy from "clipboardy";
 import { Command } from "commander";
 import dotenv from "dotenv";
 import { OpenAI } from "openai";
@@ -15,8 +16,9 @@ program.name("git-ai-commit").description("AI-powered commit message generator")
 
 program
     .command("generate")
-    .description("Generate and apply an AI-powered commit message")
-    .action(async () => {
+    .description("Generate an AI-powered commit message")
+    .option("-c, --copy", "Copy the commit message to clipboard instead of applying it")
+    .action(async options => {
         try {
             const diff = await git.diff(["--staged"]);
 
@@ -59,10 +61,17 @@ program
                 ]
             });
 
-            const commitMessage = response.choices[0]?.message?.content || "Generated commit message unavailable.";
+            const commitMessage =
+                response.choices[0]?.message?.content?.trim() || "Generated commit message unavailable.";
 
             console.log(chalk.green("✅ AI-Generated Commit Message:"));
             console.log(chalk.blue(`"${commitMessage}"`));
+
+            if (options.copy) {
+                clipboardy.writeSync(commitMessage);
+                console.log(chalk.green("📋 Commit message copied to clipboard!"));
+                return;
+            }
 
             const shouldCommit = await new Promise(resolve => {
                 process.stdout.write(chalk.yellow("💡 Do you want to apply this commit? (y/n): "));
@@ -78,7 +87,7 @@ program
                 console.log(chalk.yellow("❌ Commit canceled by the user."));
             }
         } catch (error) {
-            console.error(chalk.red("❌ Error applying AI-generated commit message:"), error);
+            console.error(chalk.red("❌ Error fetching AI-generated commit message:"), error);
         }
     });
 

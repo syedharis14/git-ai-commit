@@ -64,7 +64,6 @@ program
             console.log(chalk.green("✅ AI-Generated Commit Message:"));
             console.log(chalk.blue(`"${commitMessage}"`));
 
-            // Confirm before committing
             const shouldCommit = await new Promise(resolve => {
                 process.stdout.write(chalk.yellow("💡 Do you want to apply this commit? (y/n): "));
                 process.stdin.once("data", data => {

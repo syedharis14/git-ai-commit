@@ -86,7 +86,6 @@ async function main() {
                     return;
                 }
 
-                // Confirm before committing
                 const shouldCommit = await new Promise(resolve => {
                     process.stdout.write(chalk.yellow("💡 Do you want to apply this commit? (y/n): "));
                     process.stdin.once("data", data => {

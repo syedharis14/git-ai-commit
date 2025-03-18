@@ -32,6 +32,7 @@
         "dotenv": "^16.4.7",
         "openai": "^4.87.3",
         "simple-git": "^3.27.0",
-        "update-notifier": "^7.3.1"
+        "update-notifier": "^7.3.1",
+        "winston": "^3.17.0"
     }
 }

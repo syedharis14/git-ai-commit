@@ -1,6 +1,6 @@
 {
     "name": "git-ai-commit",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A command-line tool that uses AI to generate meaningful and context-aware commit messages based on staged changes. This package aims to save time, ensure consistent commit message quality, and improve project documentation by leveraging natural language generation.",
     "main": "index.js",
     "scripts": {
@@ -21,6 +21,7 @@
     "license": "ISC",
     "devDependencies": {
         "@types/node": "^22.13.10",
+        "@types/update-notifier": "^6.0.8",
         "typescript": "^5.8.2"
     },
     "dependencies": {
@@ -30,6 +31,7 @@
         "cosmiconfig": "^9.0.0",
         "dotenv": "^16.4.7",
         "openai": "^4.87.3",
-        "simple-git": "^3.27.0"
+        "simple-git": "^3.27.0",
+        "update-notifier": "^7.3.1"
     }
 }

@@ -5,6 +5,8 @@ import { cosmiconfig } from "cosmiconfig";
 import dotenv from "dotenv";
 import { OpenAI } from "openai";
 import simpleGit from "simple-git";
+import updateNotifier from "update-notifier";
+import pkg from "./package.json";
 
 async function main() {
     dotenv.config();
@@ -15,9 +17,18 @@ async function main() {
     const config = configResult?.config || {};
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+    const notifier = updateNotifier({ pkg });
+    if (notifier.update) {
+        console.log(
+            chalk.yellow(
+                `🚀 A new version (${notifier.update.latest}) of git-ai-commit is available! Update now: npm i -g git-ai-commit`
+            )
+        );
+    }
+
     const program = new Command();
 
-    program.name("git-ai-commit").description("AI-powered commit message generator").version("0.1.0");
+    program.name("git-ai-commit").description("AI-powered commit message generator").version(pkg.version);
 
     program
         .command("generate")
@@ -86,6 +97,7 @@ async function main() {
                     return;
                 }
 
+                // Confirm before committing
                 const shouldCommit = await new Promise(resolve => {
                     process.stdout.write(chalk.yellow("💡 Do you want to apply this commit? (y/n): "));
                     process.stdin.once("data", data => {

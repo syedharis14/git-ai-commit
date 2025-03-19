@@ -50,13 +50,14 @@ async function main() {
         .option("-c, --copy", "Copy the commit message to clipboard instead of applying it", config.copy || false)
         .option("--auto-commit", "Automatically commit without confirmation", config.autoCommit || false)
         .option("--model <model>", "Specify OpenAI model (gpt-4o, gpt-3.5-turbo)", config.model || "gpt-4o")
+        .option("--max-lines <number>", "Limit number of git diff lines sent to OpenAI", config.maxLines || 100)
         .option("-v, --verbose", "Enable detailed logging", false)
         .action(async options => {
             try {
                 if (options.verbose) logger.info("Verbose mode enabled.");
 
                 logger.info("Checking for staged changes...");
-                const diff = await git.diff(["--staged"]);
+                let diff = await git.diff(["--staged"]);
 
                 if (!diff) {
                     logger.warn("No staged changes found.");
@@ -64,6 +65,14 @@ async function main() {
                         chalk.yellow("⚠️ No staged changes found. Please stage changes before running this command.")
                     );
                     return;
+                }
+
+                // Limit number of lines sent to OpenAI
+                const maxLines = parseInt(options.maxLines, 10) || 100;
+                const diffLines = diff.split("\n");
+                if (diffLines.length > maxLines) {
+                    logger.warn(`Git diff too large (${diffLines.length} lines). Limiting to ${maxLines} lines.`);
+                    diff = diffLines.slice(0, maxLines).join("\n") + "\n[...truncated]";
                 }
 
                 logger.info("Sending git diff to OpenAI...");

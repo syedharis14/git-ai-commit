@@ -12,6 +12,9 @@
         "type": "git",
         "url": "https://github.com/syedharis14/git-ai-commit.git"
     },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/"
+    },
     "bin": {
         "git-ai-commit": "./index.js"
     },

@@ -1,19 +1,24 @@
 {
     "name": "@syedharis14/git-ai-commit",
     "version": "1.0.8",
-    "description": "A command-line tool that uses AI to generate meaningful and context-aware commit messages based on staged changes. This package aims to save time, ensure consistent commit message quality, and improve project documentation by leveraging natural language generation.",
+    "description": "A CLI tool that generates AI-based commit messages from staged changes.",
     "main": "index.js",
     "scripts": {
         "build": "tsc",
         "test": "jest",
-        "release": "standard-version"
+        "release": "standard-version",
+        "prepublishOnly": "npm run build"
     },
     "repository": {
         "type": "git",
         "url": "https://github.com/syedharis14/git-ai-commit.git"
     },
     "publishConfig": {
-        "registry": "https://registry.npmjs.org/"
+        "access": "public",
+        "registries": {
+            "npm": "https://registry.npmjs.org/",
+            "github": "https://npm.pkg.github.com/"
+        }
     },
     "bin": {
         "git-ai-commit": "./index.js"
@@ -53,6 +58,8 @@
         "winston": "^3.17.0"
     },
     "files": [
-        "index.js"
+        "index.js",
+        "dist/",
+        "README.md"
     ]
 }

@@ -11,16 +11,19 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           registry-url: "https://registry.npmjs.org/"
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level=high || true
 
       - name: Compile TypeScript
         run: npm run build
@@ -42,4 +45,12 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-          npm publish --access public
+          npm publish --access public --tag latest
+
+      - name: Publish to GitHub Packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm config set @syedharis14:registry https://npm.pkg.github.com/
+          npm config set //npm.pkg.github.com/:_authToken=${{ secrets.NEW_GITHUB_PERSONAL_ACCESS_TOKEN }}
+          npm publish --registry=https://npm.pkg.github.com/

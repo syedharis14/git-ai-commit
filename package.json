@@ -8,15 +8,23 @@
     },
     "repository": {
         "type": "git",
-        "url": "git@syedharis14_github.com:syedharis14/git-ai-commit.git"
+        "url": "https://github.com/syedharis14/git-ai-commit.git"
     },
     "bin": {
         "git-ai-commit": "./index.js"
     },
     "keywords": [
         "commit",
-        "messages"
+        "messages",
+        "ai",
+        "conventional-commits",
+        "git",
+        "cli-tool"
     ],
+    "homepage": "https://github.com/syedharis14/git-ai-commit#readme",
+    "bugs": {
+        "url": "https://github.com/syedharis14/git-ai-commit/issues"
+    },
     "author": "Syed Haris Bin Aamir",
     "license": "ISC",
     "devDependencies": {
@@ -37,5 +45,8 @@
         "simple-git": "^3.27.0",
         "update-notifier": "^7.3.1",
         "winston": "^3.17.0"
-    }
+    },
+    "files": [
+        "index.js"
+    ]
 }

@@ -18,7 +18,9 @@ const clipboardy_1 = __importDefault(require("clipboardy"));
 const commander_1 = require("commander");
 const cosmiconfig_1 = require("cosmiconfig");
 const dotenv_1 = __importDefault(require("dotenv"));
+const fs_1 = __importDefault(require("fs"));
 const openai_1 = require("openai");
+const path_1 = __importDefault(require("path"));
 const simple_git_1 = __importDefault(require("simple-git"));
 const update_notifier_1 = __importDefault(require("update-notifier"));
 const winston_1 = __importDefault(require("winston"));
@@ -29,6 +31,25 @@ const logger = winston_1.default.createLogger({
     format: winston_1.default.format.combine(winston_1.default.format.timestamp(), winston_1.default.format.printf(({ timestamp, level, message }) => `${timestamp} [${level.toUpperCase()}]: ${message}`)),
     transports: [new winston_1.default.transports.Console(), new winston_1.default.transports.File({ filename: "git-ai-commit.log" })]
 });
+// Tracking usage
+const usageFile = path_1.default.resolve(process.cwd(), ".git-ai-commit-usage.json");
+function logUsage(command) {
+    try {
+        const data = fs_1.default.existsSync(usageFile) ? JSON.parse(fs_1.default.readFileSync(usageFile, "utf8")) : {};
+        const today = new Date().toISOString().slice(0, 10);
+        if (!data[today]) {
+            data[today] = {};
+        }
+        if (!data[today][command]) {
+            data[today][command] = 0;
+        }
+        data[today][command]++;
+        fs_1.default.writeFileSync(usageFile, JSON.stringify(data, null, 2));
+    }
+    catch (e) {
+        console.error("Failed to log usage:", e);
+    }
+}
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         dotenv_1.default.config();
@@ -54,6 +75,9 @@ function main() {
             .option("-v, --verbose", "Enable detailed logging", false)
             .action((options) => __awaiter(this, void 0, void 0, function* () {
             var _a, _b, _c;
+            const analyticsEnabled = config.analytics !== false;
+            if (analyticsEnabled)
+                logUsage("generate");
             try {
                 if (options.verbose)
                     logger.info("Verbose mode enabled.");
@@ -138,6 +162,24 @@ function main() {
                 console.error(chalk_1.default.red("❌ Error fetching AI-generated commit message:"), error);
             }
         }));
+        program
+            .command("stats")
+            .description("Show CLI usage statistics")
+            .action(() => {
+            try {
+                const data = JSON.parse(fs_1.default.readFileSync(usageFile, "utf8"));
+                console.log("📊 Usage Statistics:\n");
+                for (const [date, commands] of Object.entries(data)) {
+                    console.log(`${date}:`);
+                    for (const [cmd, count] of Object.entries(commands)) {
+                        console.log(`  ${cmd}: ${count} time(s)`);
+                    }
+                }
+            }
+            catch (_a) {
+                console.log("No usage data available yet.");
+            }
+        });
         program.parse(process.argv);
     });
 }

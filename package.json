@@ -10,10 +10,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/syedharis14/git-ai-commit.git"
+        "url": "https://github.com/syedharis14/git-ai-commit.git"
     },
     "publishConfig": {
-        "access": "public"
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
     },
     "bin": {
         "git-ai-commit": "./index.js"

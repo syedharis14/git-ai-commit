@@ -17,6 +17,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 22
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Setup Authentication for npm & GitHub Packages
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=\${NODE_AUTH_TOKEN}" >> ~/.npmrc
+          echo "//registry.npmjs.org/:_authToken=\${NODE_AUTH_TOKEN}" >> ~/.npmrc
+          echo "always-auth=true" >> ~/.npmrc
 
       - name: Install dependencies
         run: npm ci
@@ -39,13 +46,9 @@ jobs:
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-          npm publish --access public
+        run: npm publish --access public
 
       - name: Publish to GitHub Packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npm config set @syedharis14:registry=https://npm.pkg.github.com
-          npm publish
+        run: npm publish --registry=https://npm.pkg.github.com/

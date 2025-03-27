@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.1.0 (2025-03-27)
+
+
+### Features
+
+* **core:** specify message language per user input ([09126a2](https://github.com/syedharis14/git-ai-commit/commit/09126a25b9f6468a3ebb4a20bc10e5e605bf169e))
+
 ### 1.0.8 (2025-03-27)
 
 ### 1.0.7 (2025-03-27)

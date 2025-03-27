@@ -17,9 +17,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 22
-          registry-url: "https://registry.npmjs.org/"
 
-      - name: Setup Authentication for npm & GitHub Packages
+      - name: Setup Authentication
         run: |
           echo "@syedharis14:registry=https://npm.pkg.github.com/" >> ~/.npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.GH_PACKAGES_TOKEN }}" >> ~/.npmrc
@@ -45,16 +44,7 @@ jobs:
           git push --follow-tags origin main
 
       - name: Publish to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
-          npm publish --access public
+        run: npm publish --registry=https://registry.npmjs.org/ --access public
 
       - name: Publish to GitHub Packages
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
-        run: |
-          npm config set @syedharis14:registry=https://npm.pkg.github.com
-          npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GH_PACKAGES_TOKEN }}
-          npm publish --registry=https://npm.pkg.github.com/
+        run: npm publish --registry=https://npm.pkg.github.com/

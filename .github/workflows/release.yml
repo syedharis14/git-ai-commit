@@ -23,6 +23,11 @@ jobs:
 
       - name: Compile TypeScript
         run: npm run build
+        
+      - name: Configure Git author
+        run: |
+          git config user.email "your-email@example.com"
+          git config user.name "Your Name"
 
       - name: Run release
         env:

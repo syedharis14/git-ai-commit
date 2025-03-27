@@ -5,11 +5,19 @@ import clipboardy from "clipboardy";
 import { Command } from "commander";
 import { cosmiconfig } from "cosmiconfig";
 import dotenv from "dotenv";
+import fs from "fs";
 import { OpenAI } from "openai";
+import path from "path";
 import simpleGit from "simple-git";
 import updateNotifier from "update-notifier";
 import winston from "winston";
 import pkg from "./package.json";
+
+type UsageData = {
+    [date: string]: {
+        [command: string]: number;
+    };
+};
 
 // Initialize logging
 const logger = winston.createLogger({
@@ -20,6 +28,28 @@ const logger = winston.createLogger({
     ),
     transports: [new winston.transports.Console(), new winston.transports.File({ filename: "git-ai-commit.log" })]
 });
+
+// Tracking usage
+const usageFile = path.resolve(process.cwd(), ".git-ai-commit-usage.json");
+
+function logUsage(command: string) {
+    try {
+        const data: UsageData = fs.existsSync(usageFile) ? JSON.parse(fs.readFileSync(usageFile, "utf8")) : {};
+
+        const today = new Date().toISOString().slice(0, 10);
+        if (!data[today]) {
+            data[today] = {};
+        }
+        if (!data[today][command]) {
+            data[today][command] = 0;
+        }
+        data[today][command]++;
+
+        fs.writeFileSync(usageFile, JSON.stringify(data, null, 2));
+    } catch (e) {
+        console.error("Failed to log usage:", e);
+    }
+}
 
 async function main() {
     dotenv.config();
@@ -53,6 +83,9 @@ async function main() {
         .option("--max-lines <number>", "Limit number of git diff lines sent to OpenAI", config.maxLines || 100)
         .option("-v, --verbose", "Enable detailed logging", false)
         .action(async options => {
+            const analyticsEnabled = config.analytics !== false;
+            if (analyticsEnabled) logUsage("generate");
+
             try {
                 if (options.verbose) logger.info("Verbose mode enabled.");
 
@@ -148,6 +181,24 @@ async function main() {
             } catch (error) {
                 logger.error(`Error fetching AI-generated commit message: ${error}`);
                 console.error(chalk.red("❌ Error fetching AI-generated commit message:"), error);
+            }
+        });
+
+    program
+        .command("stats")
+        .description("Show CLI usage statistics")
+        .action(() => {
+            try {
+                const data: UsageData = JSON.parse(fs.readFileSync(usageFile, "utf8"));
+                console.log("📊 Usage Statistics:\n");
+                for (const [date, commands] of Object.entries(data)) {
+                    console.log(`${date}:`);
+                    for (const [cmd, count] of Object.entries(commands)) {
+                        console.log(`  ${cmd}: ${count} time(s)`);
+                    }
+                }
+            } catch {
+                console.log("No usage data available yet.");
             }
         });
 

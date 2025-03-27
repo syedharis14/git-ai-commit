@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 1.0.13 (2025-03-27)
+
+
+### Bug Fixes
+
+* **workflow:** set npm auth token for github packages correctly ([c3e096d](https://github.com/syedharis14/git-ai-commit/commit/c3e096dbbba842acc5dc25d850d498c6393fd975))
+
 ### 1.0.12 (2025-03-27)
 
 ### 1.0.11 (2025-03-27)

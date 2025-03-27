@@ -1,6 +1,6 @@
 {
     "name": "@syedharis14/git-ai-commit",
-    "version": "1.0.10",
+    "version": "1.0.11",
     "description": "A command-line tool that uses AI to generate meaningful and context-aware commit messages based on staged changes. This package aims to save time, ensure consistent commit message quality, and improve project documentation by leveraging natural language generation.",
     "main": "index.js",
     "scripts": {

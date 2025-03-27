@@ -4,7 +4,7 @@
     "description": "A command-line tool that uses AI to generate meaningful and context-aware commit messages based on staged changes. This package aims to save time, ensure consistent commit message quality, and improve project documentation by leveraging natural language generation.",
     "main": "index.js",
     "scripts": {
-        "test": "npx git-ai-commit --help"
+        "test": "jest"
     },
     "repository": {
         "type": "git",
@@ -20,8 +20,11 @@
     "author": "Syed Haris Bin Aamir",
     "license": "ISC",
     "devDependencies": {
+        "@types/jest": "^29.5.14",
         "@types/node": "^22.13.10",
         "@types/update-notifier": "^6.0.8",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.3.0",
         "typescript": "^5.8.2"
     },
     "dependencies": {

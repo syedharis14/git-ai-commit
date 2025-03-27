@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 22
+          registry-url: "https://registry.npmjs.org/"
 
       - name: Install dependencies
         run: npm ci
@@ -32,9 +33,13 @@ jobs:
       - name: Run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx standard-version && git push --follow-tags origin main
+        run: |
+          npx standard-version
+          git push --follow-tags origin main
 
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
+        run: |
+          npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          npm publish --access public

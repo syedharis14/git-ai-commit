@@ -102,7 +102,8 @@ function main() {
                     messages: [
                         {
                             role: "system",
-                            content: "You are an expert at writing Conventional Commits messages. Follow these rules:\n" +
+                            content: "You are an expert at writing Conventional Commits messages in the language specified by the user. " +
+                                "Follow these rules:\n" +
                                 "1. Format: <type>(<scope>): <subject>\n" +
                                 "2. Types: feat, fix, chore, docs, style, refactor, perf, test\n" +
                                 "3. Scope: Optional technical context (e.g., component, module)\n" +
@@ -115,7 +116,7 @@ function main() {
                                 "Requirements:\n" +
                                 "- Analyze the git diff carefully\n" +
                                 "- Identify primary change type and scope\n" +
-                                "- Use technical terms but avoid jargon\n" +
+                                "- Use technical terms appropriately, but ensure the commit message is fully in the language provided by the user\n" +
                                 "- For breaking changes, append ! after type and include BREAKING CHANGE in body\n\n" +
                                 "Respond ONLY with the formatted commit message. No explanations or markdown."
                         },

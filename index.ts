@@ -82,6 +82,11 @@ async function main() {
         .option("--model <model>", "Specify OpenAI model (gpt-4o, gpt-3.5-turbo)", config.model || "gpt-4o")
         .option("--max-lines <number>", "Limit number of git diff lines sent to OpenAI", config.maxLines || 100)
         .option("-v, --verbose", "Enable detailed logging", false)
+        .option(
+            "--lang <language>",
+            "Generate commit message in a specific language (e.g., en, es, fr, ur, ar)",
+            config.lang || "en"
+        )
         .action(async options => {
             const analyticsEnabled = config.analytics !== false;
             if (analyticsEnabled) logUsage("generate");
@@ -135,7 +140,7 @@ async function main() {
                         },
                         {
                             role: "user",
-                            content: `Here is the Git diff:\n\n${diff}\n\nGenerate a short, useful commit message:`
+                            content: `Generate a conventional commit message in ${options.lang} language based on the following Git diff:\n\n${diff}`
                         }
                     ]
                 });

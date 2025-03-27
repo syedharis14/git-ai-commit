@@ -47,9 +47,14 @@ jobs:
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
+        run: |
+          npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
+          npm publish --access public
 
       - name: Publish to GitHub Packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
-        run: npm publish --registry=https://npm.pkg.github.com/
+        run: |
+          npm config set @syedharis14:registry=https://npm.pkg.github.com
+          npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GH_PACKAGES_TOKEN }}
+          npm publish --registry=https://npm.pkg.github.com/

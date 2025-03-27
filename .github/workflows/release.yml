@@ -24,6 +24,11 @@ jobs:
       - name: Compile TypeScript
         run: npm run build
 
+      - name: Set git user
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
       - name: Run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

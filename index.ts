@@ -13,13 +13,27 @@ import updateNotifier from "update-notifier";
 import winston from "winston";
 import pkg from "./package.json";
 
+/**
+ * @typedef {Object.<string, Object.<string, number>>} UsageData
+ * A mapping of dates to command usage counts.
+ */
 type UsageData = {
     [date: string]: {
         [command: string]: number;
     };
 };
 
-// Initialize logging
+/**
+ * @typedef {Object} GenerateOptions
+ * @property {boolean} [copy] - If true, copy the commit message to clipboard.
+ * @property {boolean} [autoCommit] - If true, automatically commit without confirmation.
+ * @property {string} [model] - The OpenAI model to use (e.g., "gpt-4o", "gpt-3.5-turbo").
+ * @property {string|number} [maxLines] - The maximum number of git diff lines to send to OpenAI.
+ * @property {boolean} [verbose] - If true, enable detailed logging.
+ * @property {string} [lang] - Language code for the commit message (e.g., "en", "es").
+ */
+
+// Initialize logging with Winston
 const logger = winston.createLogger({
     level: "info",
     format: winston.format.combine(
@@ -29,12 +43,20 @@ const logger = winston.createLogger({
     transports: [new winston.transports.Console(), new winston.transports.File({ filename: "git-ai-commit.log" })]
 });
 
-// Tracking usage
+// Tracking usage file path
 const usageFile = path.resolve(process.cwd(), ".git-ai-commit-usage.json");
 
-function logUsage(command: string) {
+/**
+ * Logs the usage of a command by updating the usage file.
+ *
+ * @param {string} command - The command name to log.
+ * @returns {void}
+ */
+function logUsage(command: string): void {
     try {
-        const data: UsageData = fs.existsSync(usageFile) ? JSON.parse(fs.readFileSync(usageFile, "utf8")) : {};
+        const data: UsageData = fs.existsSync(usageFile)
+            ? (JSON.parse(fs.readFileSync(usageFile, "utf8")) as UsageData)
+            : {};
 
         const today = new Date().toISOString().slice(0, 10);
         if (!data[today]) {
@@ -51,7 +73,14 @@ function logUsage(command: string) {
     }
 }
 
-async function main() {
+/**
+ * The main function that configures environment variables, initializes the CLI,
+ * and handles commands to generate and apply AI-powered commit messages.
+ *
+ * @returns {Promise<void>}
+ */
+async function main(): Promise<void> {
+    // Load environment variables from .env file
     dotenv.config();
 
     const git = simpleGit();
@@ -60,7 +89,7 @@ async function main() {
     const config = configResult?.config || {};
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    // Check for package updates
+    // Check for package updates and notify the user
     const notifier = updateNotifier({ pkg });
     if (notifier.update) {
         console.log(
@@ -71,7 +100,6 @@ async function main() {
     }
 
     const program = new Command();
-
     program.name("git-ai-commit").description("AI-powered commit message generator").version(pkg.version);
 
     program
@@ -87,7 +115,7 @@ async function main() {
             "Generate commit message in a specific language (e.g., en, es, fr, ur, ar)",
             config.lang || "en"
         )
-        .action(async options => {
+        .action(async (/** @param {GenerateOptions} options */ options) => {
             const analyticsEnabled = config.analytics !== false;
             if (analyticsEnabled) logUsage("generate");
 
@@ -106,7 +134,7 @@ async function main() {
                 }
 
                 // Limit number of lines sent to OpenAI
-                const maxLines = parseInt(options.maxLines, 10) || 100;
+                const maxLines = parseInt(options.maxLines as string, 10) || 100;
                 const diffLines = diff.split("\n");
                 if (diffLines.length > maxLines) {
                     logger.warn(`Git diff too large (${diffLines.length} lines). Limiting to ${maxLines} lines.`);
@@ -169,9 +197,9 @@ async function main() {
                 }
 
                 // Confirm before committing
-                const shouldCommit = await new Promise(resolve => {
+                const shouldCommit = await new Promise<boolean>(resolve => {
                     process.stdout.write(chalk.yellow("💡 Do you want to apply this commit? (y/n): "));
-                    process.stdin.once("data", data => {
+                    process.stdin.once("data", (data: Buffer) => {
                         resolve(data.toString().trim().toLowerCase() === "y");
                     });
                 });
@@ -195,11 +223,13 @@ async function main() {
         .description("Show CLI usage statistics")
         .action(() => {
             try {
-                const data: UsageData = JSON.parse(fs.readFileSync(usageFile, "utf8"));
+                const data: UsageData = JSON.parse(fs.readFileSync(usageFile, "utf8")) as UsageData;
                 console.log("📊 Usage Statistics:\n");
                 for (const [date, commands] of Object.entries(data)) {
                     console.log(`${date}:`);
-                    for (const [cmd, count] of Object.entries(commands)) {
+                    // Cast commands to Record<string, number> so TS knows its structure.
+                    const cmds = commands as Record<string, number>;
+                    for (const [cmd, count] of Object.entries(cmds)) {
                         console.log(`  ${cmd}: ${count} time(s)`);
                     }
                 }

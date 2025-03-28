@@ -87,7 +87,3 @@ This package uses GitHub Actions for automatic releases and NPM publishing:
 -   📦 [NPM Package](https://www.npmjs.com/package/@syedharis14/git-ai-commit)
 -   📂 [GitHub Repository](https://github.com/syedharis14/git-ai-commit)
 -   🐛 [Report Issues](https://github.com/syedharis14/git-ai-commit/issues)
-
-## License
-
-This project is licensed under the ISC License.
